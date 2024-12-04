@@ -12,10 +12,7 @@ export class Produto {
 
   @Column('decimal', { precision: 10, scale: 2 })
   @IsPositive({ message: 'O preço deve ser um valor positivo.' })
-  // Por algum motivo não consegui validar por aqui tive que incluir no controller
-  // @Matches(/^\d+(\.\d{1,2})?$/, {
-  //   message: 'O preço deve ter no máximo duas casas decimais.',
-  // })
+  @IsNotEmpty({ message: 'O preço é obrigatório.' })
   preco: number;
 
   @Column()

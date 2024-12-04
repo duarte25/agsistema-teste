@@ -10,18 +10,27 @@ export class ProdutoService {
     private produtoRepository: Repository<Produto>,
   ) {}
 
-  // Função de validação de preço centralizada no serviço, tinha mudado para o controller mas não precisa
+  // Função de validação de preço centralizada no serviço
   private validatePreco(preco: number) {
     const precoStr = preco.toString();
     const regex = /^\d+(\.\d{1,2})?$/;
+    const errors = [];
+
     if (!regex.test(precoStr)) {
-      throw new BadRequestException(
-        'O preço deve ter no máximo duas casas decimais.',
-      );
+      errors.push('O preço deve ter no máximo duas casas decimais.');
     }
 
     if (preco <= 0) {
-      throw new BadRequestException('O preço deve ser maior que zero.');
+      errors.push('O preço deve ser maior que zero.');
+    }
+
+    // Se houver erros, lançar a exceção com os erros no formato de array
+    if (errors.length > 0) {
+      throw new BadRequestException({
+        message: errors,
+        error: 'Bad Request',
+        statusCode: 400,
+      });
     }
   }
 
@@ -47,7 +56,7 @@ export class ProdutoService {
 
   // Atualizar um produto com PUT
   async update(id: number, produto: Produto): Promise<Produto> {
-    // Valida preço antes de atualizar o produto, (fundamental)
+    // Valida preço antes de atualizar o produto
     this.validatePreco(produto.preco);
 
     await this.produtoRepository.update(id, produto);

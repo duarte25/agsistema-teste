@@ -6,6 +6,8 @@ import {
   Param,
   Put,
   Delete,
+  ValidationPipe,
+  UsePipes,
 } from '@nestjs/common';
 import { ProdutoService } from './produto.service';
 import { Produto } from './produto.entity';
@@ -16,6 +18,7 @@ export class ProdutoController {
 
   // Rota POST para criar um novo produto
   @Post()
+  @UsePipes(new ValidationPipe({ transform: true })) // Aplica a validação
   async create(@Body() produto: Produto): Promise<Produto> {
     return this.produtoService.create(produto);
   }

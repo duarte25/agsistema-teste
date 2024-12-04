@@ -6,12 +6,12 @@ import { ProdutoModule } from './produto/produto.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost', // Altere se necessário
+      host: 'localhost',
       port: 5432,
-      username: 'usuario', // Substitua pelo seu usuário
-      password: 'senha', // Substitua pela sua senha
-      database: 'produtos_db', // Nome do banco de dados
-      entities: [__dirname + '/**/*.entity{.ts,.js}'], // Certifique-se de que isso está correto
+      username: 'usuario',
+      password: 'senha',
+      database: 'produtos_db',
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
     ProdutoModule,

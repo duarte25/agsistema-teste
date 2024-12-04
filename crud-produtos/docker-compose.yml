@@ -5,13 +5,13 @@ services:
     image: postgres:14-alpine
     container_name: postgres-container
     environment:
-      POSTGRES_USER: usuario       # O usuário do PostgreSQL
-      POSTGRES_PASSWORD: senha     # A senha para o usuário
-      POSTGRES_DB: produtos_db    # O nome do banco de dados a ser criado
+      POSTGRES_USER: usuario     
+      POSTGRES_PASSWORD: senha     
+      POSTGRES_DB: produtos_db    
     volumes:
-      - postgres_data:/var/lib/postgresql/data   # Persistência de dados do banco de dados
+      - postgres_data:/var/lib/postgresql/data   
     ports:
-      - "5432:5432"               # Mapeia a porta 5432 do PostgreSQL para a porta 5432 do host
+      - "5432:5432"             
     networks:
       - db_network
 

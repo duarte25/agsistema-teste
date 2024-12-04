@@ -1,12 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import TodoItem from '../tasks';
 import TodoPopup from '../popup';
+import { useQuery } from 'react-query';
+import { fetchApi } from '@/utils/fetchApi';
 
 const TodoList = () => {
   const [todos, setTodos] = useState([]);
   const [todoText, setTodoText] = useState('');
   const [isAdding, setIsAdding] = useState(false);
   const [todoToDelete, setTodoToDelete] = useState(null);
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["getProduto"],
+    queryFn: async () => {
+        const response = await fetchApi("/produtos", "GET");
+
+        return response;
+    }
+});
+
+console.log("DATA", data)
 
   useEffect(() => {
     const storedTodos = JSON.parse(localStorage.getItem('todos'));

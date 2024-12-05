@@ -2,56 +2,66 @@ import { createURLSearch } from "./createURLSearch.js";
 
 export const fetchApi = async (route, method, data, ...props) => {
   try {
-
     let urlApi = process.env.NEXT_PUBLIC_API_URL;
     let dados = null;
+    let headers = { "accept": "application/json" };
 
+    // Tratamento do parâmetro GET com dados
     if (method === "GET" && data) {
       let urlSearch = createURLSearch(route, data);
-      
       route = urlSearch;
     }
 
-    // Se for outro tipo de requisição, trata os dados como JSON
+    // Tratamento do método POST e outros métodos com corpo de dados
     if (method !== "GET" && data) {
       if (data instanceof FormData) {
+        headers["accept"] = "multipart/form-data";
         dados = data;
       } else {
+        headers["Content-Type"] = "application/json";
         dados = JSON.stringify(data);
       }
     }
-    console.log(urlApi)
+
     const response = await fetch(`${urlApi}${route}`, {
       method: method,
+      headers: headers,
       body: dados,
       cache: "no-store",
-      ...props
+      ...props,
     });
 
-    console.log("RESPOSTA", response)
+    if (!response.ok) {
+      const errorData = await response.json();
+
+      return {
+        data: [],
+        error: true,
+        errors: errorData.message || [{ message: "Erro inesperado na requisição" }],
+      };
+    }
 
     const responseData = await response.json();
+
     if (responseData) {
       return {
         data: responseData,
         error: false,
-        errors: []
+        errors: [],
       };
     } else {
       return {
         data: [],
         error: true,
-        errors: [{ message: "Nenhuma refeição encontrada" }]
+        errors: [{ message: "Nenhum produto encontrado" }],
       };
     }
-
   } catch (error) {
     console.log("Erro na requisição", error);
-
     return {
       data: [],
       error: true,
-      errors: [{ message: error?.message ?? "Erro inesperado" }]
+      errors: [{ message: error?.message ?? "Erro inesperado" }],
     };
   }
 };

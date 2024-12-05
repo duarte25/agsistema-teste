@@ -34,6 +34,7 @@ const usuarioSchema = new mongoose.Schema({
     }
 );
 
+usuarioSchema.index({nome: "text"}, {default_language: "pt"});
 // Configurações do modelo para que seja usada para buscar dados de usuário de forma paginada em nossa aplicação
 usuarioSchema.plugin(paginate);
 

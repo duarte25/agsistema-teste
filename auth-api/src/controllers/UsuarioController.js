@@ -38,8 +38,21 @@ export default class UsuarioController {
     static async listarUsuario(req, res) {
 
         const pagina = parseInt(req.query.pagina) || 1;
-        const { limite, cpf, email } = req.query;
+        const { limite, nome, cpf, email } = req.query;
         const filtros = {};
+
+        let sort = { _id: -1 };
+
+        if (nome) {
+            filtros.$text = {
+                $search: nome,
+                $caseSensitive: false,
+                $diacriticSensitive: false,
+                $language: "pt"
+            };
+
+            sort = { nome: 1, _id: -1 }; // Se não é único precisa ter um segundo campo único para ordenar
+        }
 
         if (cpf) filtros.cpf = cpf;
 
@@ -49,7 +62,7 @@ export default class UsuarioController {
             filtros,
             {
                 ...paginateOptions, ...{
-                    sort: { _id: -1 },
+                    sort: sort,
                     page: pagina,
                     limit: limite,
                     lean: true
@@ -91,7 +104,7 @@ export default class UsuarioController {
             usuario.senha = bcrypt.hashSync(senha, 10);
         }
 
-        await usuario.save();
+        await Usuario.findByIdAndUpdate(usuario);
 
         return sendResponse(res, 200, { data: usuario });
     }

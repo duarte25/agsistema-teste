@@ -12,8 +12,13 @@ export default function PopupProduto({ isOpen, onClose, onSave }) {
 
   const handleChange = (field, value) => {
     if (field === 'preco') {
-      const parsedValue = parseFloat(value);
-      value = isNaN(parsedValue) ? "" : parsedValue;
+  
+      let parsedValue = parseFloat(value);
+      if (isNaN(parsedValue)) {
+        value = "";
+      } else {
+        value = parsedValue.toFixed(2);
+      }
     }
 
     setProduct((prevProduct) => ({
@@ -27,14 +32,13 @@ export default function PopupProduto({ isOpen, onClose, onSave }) {
       const response = await fetchApi("/produtos", "POST", data);
 
       if (response.error) {
-
         response.errors.forEach((err) => {
           toast.error(err.message || "Erro ao cadastrar produto!");
         });
       } else {
         toast.success("Produto cadastrado com sucesso!");
-        onSave && onSave(data); 
-        onClose(); 
+        onSave && onSave(data);
+        onClose();
       }
     } catch (error) {
       toast.error("Erro ao cadastrar produto!");
@@ -44,7 +48,7 @@ export default function PopupProduto({ isOpen, onClose, onSave }) {
   const handleSave = () => {
     const validProduct = {
       nome: product.nome.trim(),
-      preco: parseFloat(product.preco),
+      preco: parseFloat(product.preco), // Aqui também, para garantir que é um número
       descricao: product.descricao.trim(),
     };
 

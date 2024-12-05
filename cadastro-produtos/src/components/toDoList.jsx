@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { fetchApi } from '@/utils/fetchApi'; 
-import Produtos from '../produtos'; 
-import PopupProduto from '../popup';
+import Produtos from './produtos'; 
+import PopupProduto from './popup';
 
 const TodoList = () => {
   const [isAdding, setIsAdding] = useState(false);

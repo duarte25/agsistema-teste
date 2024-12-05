@@ -6,13 +6,11 @@ export const fetchApi = async (route, method, data, ...props) => {
     let dados = null;
     let headers = { "accept": "application/json" };
 
-    // Tratamento do parâmetro GET com dados
     if (method === "GET" && data) {
       let urlSearch = createURLSearch(route, data);
       route = urlSearch;
     }
 
-    // Tratamento do método POST e outros métodos com corpo de dados
     if (method !== "GET" && data) {
       if (data instanceof FormData) {
         headers["accept"] = "multipart/form-data";
@@ -45,7 +43,7 @@ export const fetchApi = async (route, method, data, ...props) => {
 
     if (responseData) {
       return {
-        data: responseData,
+        data: responseData?.data,
         error: false,
         errors: [],
       };

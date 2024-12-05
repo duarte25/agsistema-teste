@@ -36,93 +36,58 @@ export default class UsuarioController {
     }
 
     static async listarUsuario(req, res) {
-        try {
 
-            const pagina = parseInt(req.query.pagina);
-            const { limite } = parseInt(req.query.limite);
+        const pagina = parseInt(req.query.pagina) || 1;
+        const { limite, cpf, email } = req.query;
+        const filtros = {};
 
-            const { cpf } = req.query;
+        if (cpf) filtros.cpf = cpf;
 
-            const filtros = {};
+        if (email) filtros.email = email;
 
-            if (cpf) filtros.cpf = cpf;
-
-            const findUser = await Usuario.paginate(filtros, {
+        const usuario = await Usuario.paginate(
+            filtros,
+            {
                 ...paginateOptions, ...{
-                    sort: { nome: 1 },
-                    page: pagina || 1,
-                    limit: limite || 10
+                    sort: { _id: -1 },
+                    page: pagina,
+                    limit: limite,
+                    lean: true
                 }
-            });
-
-            if (pagina > findUser.totalPaginas) {
-                let link = `/usuarios?pagina=${findUser.totalPaginas}`;
-                if (limite) link += `&limite=${limite}`;
-                if (cpf) link += `&cpf=${cpf}`;
-
-                return res.redirect(link);
             }
+        );
 
-            return res.status(200).json({
-                ...findUser,
-                error: false,
-                code: 200,
-                message: messages.httpCodes[200],
-                errors: []
-            });
-
-
-        } catch (err) {
-            return res.status(500).json({
-                data: [],
-                error: true,
-                code: 500,
-                message: messages.httpCodes[500],
-                errors: err.message
-            });
-        }
+        return sendResponse(res, 200, { data: usuario });
     }
 
     static async listarUsuarioID(req, res) {
-        try {
 
-            const { id } = req.params;
+        const { id } = req.params;
 
-            if (!idValidate(id)) {
-                return res.status(422).json({ data: [], error: true, code: 422, message: messages.httpCodes[422], errors: [messages.error.invalidID] });
-            }
-
-            const findUser = await Usuario.findById(id);
-
-            if (!findUser) {
-                return res.status(404).json({ data: [], error: true, code: 404, message: messages.httpCodes[404], errors: [messages.validationGeneric.mascCamp("Usuário")] });
-            }
-
-            return res.status(200).json({ data: findUser, error: false, code: 200, message: messages.httpCodes[200], errors: [] });
-
-        } catch (err) {
-            return res.status(500).json({
-                data: [],
-                error: true,
-                code: 500,
-                message: messages.httpCodes[500],
-                errors: err.message
-            });
+        if (!idValidate(id)) {
+            return res.status(422).json({ data: [], error: true, code: 422, message: messages.httpCodes[422], errors: [messages.error.invalidID] });
         }
 
+        const findUser = await Usuario.findById(id);
+
+        if (!findUser) {
+            return res.status(404).json({ data: [], error: true, code: 404, message: messages.httpCodes[404], errors: [messages.validationGeneric.mascCamp("Usuário")] });
+        }
+
+        return sendResponse(res, 200, { data: findUser });
     }
 
     static async alterarUsuario(req, res) {
         // Pega do validador
         const usuario = req.validateResult.usuario;
-        const {senha} = req.body;
+        const { senha } = req.body;
 
         // Só atualiza os campos que foram enviados
         for (let key in req.body) {
             usuario[key] = req.body[key];
         }
 
-        if(senha){
+        if (senha) {
             usuario.senha = bcrypt.hashSync(senha, 10);
         }
 
@@ -132,36 +97,19 @@ export default class UsuarioController {
     }
 
     static async deletarUsuario(req, res) {
-        try {
 
-            const { id } = req.params;
+        const { id } = req.params;
 
-            if (!idValidate(id)) {
-                return res.status(422).json({ data: [], error: true, code: 422, message: messages.httpCodes[422], errors: [messages.error.invalidID] });
-            }
-
-            const findUser = await Usuario.findByIdAndDelete(id);
-
-            if (!findUser) {
-                return res.status(404).json({ data: [], error: true, code: 404, message: messages.httpCodes[404], errors: [messages.validationGeneric.mascCamp("Usuário")] });
-            }
-
-            return res.status(200).json({
-                data: [],
-                error: false,
-                code: 200,
-                message: messages.httpCodes[200],
-                errors: []
-            });
-
-        } catch (err) {
-            return res.status(500).json({
-                data: [],
-                error: true,
-                code: 500,
-                message: messages.httpCodes[500],
-                errors: err.message
-            });
+        if (!idValidate(id)) {
+            return res.status(422).json({ data: [], error: true, code: 422, message: messages.httpCodes[422], errors: [messages.error.invalidID] });
         }
+
+        const findUser = await Usuario.findByIdAndDelete(id);
+
+        if (!findUser) {
+            return res.status(404).json({ data: [], error: true, code: 404, message: messages.httpCodes[404], errors: [messages.validationGeneric.mascCamp("Usuário")] });
+        }
+
+        return sendResponse(res, 200, {});
     }
 }

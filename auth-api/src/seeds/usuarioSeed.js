@@ -12,20 +12,6 @@ export default async function usuarioSeed(quantidade) {
         senha: bcrypt.hashSync("Dev@1234", 8)
     });
 
-    usuariosCriados.push({
-        nome: "Secretario",
-        cpf: faker.br.cpf(),
-        email: "secretario@gmail.com",
-        senha: bcrypt.hashSync("Dev@1234", 8)
-    });
-
-    usuariosCriados.push({
-        nome: "Administrador",
-        cpf: faker.br.cpf(),
-        email: "administrador@gmail.com",
-        senha: bcrypt.hashSync("Dev@1234", 8)
-    });
-
     for (let i = 0; i < quantidade; i++) {
 
         usuariosCriados.push({

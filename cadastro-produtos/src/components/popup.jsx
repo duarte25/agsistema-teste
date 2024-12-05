@@ -1,18 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Popup from 'reactjs-popup';
 import { fetchApi } from '@/utils/fetchApi';
 import { toast } from 'react-toastify';
 
-export default function PopupProduto({ isOpen, onClose, onSave }) {
-  const [product, setProduct] = useState({
+export default function PopupProduto({ isOpen, onClose, onSave, product, isEdit }) {
+  const [productData, setProductData] = useState({
     nome: "",
     descricao: "",
     preco: "",
   });
 
+  useEffect(() => {
+    if (product && isEdit) {
+      setProductData({
+        nome: product.nome,
+        descricao: product.descricao,
+        preco: product.preco.toString(),
+      });
+    }
+  }, [product, isEdit]);
+
   const handleChange = (field, value) => {
     if (field === 'preco') {
-  
       let parsedValue = parseFloat(value);
       if (isNaN(parsedValue)) {
         value = "";
@@ -21,35 +30,37 @@ export default function PopupProduto({ isOpen, onClose, onSave }) {
       }
     }
 
-    setProduct((prevProduct) => ({
+    setProductData((prevProduct) => ({
       ...prevProduct,
       [field]: value,
     }));
   };
 
-  async function cadas(data) {
+  async function saveProduct(data) {
     try {
-      const response = await fetchApi("/produtos", "POST", data);
+      const method = isEdit ? 'PUT' : 'POST';
+      const url = isEdit ? `/produtos/${product.id}` : '/produtos';
+      const response = await fetchApi(url, method, data);
 
       if (response.error) {
         response.errors.forEach((err) => {
-          toast.error(err.message || "Erro ao cadastrar produto!");
+          toast.error(err.message || "Erro ao salvar produto!");
         });
       } else {
-        toast.success("Produto cadastrado com sucesso!");
+        toast.success(`${isEdit ? 'Produto atualizado' : 'Produto cadastrado'} com sucesso!`);
         onSave && onSave(data);
         onClose();
       }
     } catch (error) {
-      toast.error("Erro ao cadastrar produto!");
+      toast.error("Erro ao salvar produto!");
     }
   }
 
   const handleSave = () => {
     const validProduct = {
-      nome: product.nome.trim(),
-      preco: parseFloat(product.preco), // Aqui também, para garantir que é um número
-      descricao: product.descricao.trim(),
+      nome: productData.nome.trim(),
+      preco: parseFloat(productData.preco), 
+      descricao: productData.descricao.trim(),
     };
 
     if (!validProduct.nome || !validProduct.descricao || isNaN(validProduct.preco)) {
@@ -57,19 +68,19 @@ export default function PopupProduto({ isOpen, onClose, onSave }) {
       return;
     }
 
-    cadas(validProduct);
+    saveProduct(validProduct);
   };
 
   return (
     <Popup open={isOpen} onClose={onClose} modal nested>
       <div style={{ padding: '20px', maxWidth: '400px', margin: '0 auto' }}>
-        <h2>Adicionar Produto</h2>
+        <h2>{isEdit ? 'Editar Produto' : 'Adicionar Produto'}</h2>
         <label>
           Nome:
           <input
             className='text-black'
             type="text"
-            value={product.nome}
+            value={productData.nome}
             onChange={(e) => handleChange('nome', e.target.value)}
           />
         </label>
@@ -78,7 +89,7 @@ export default function PopupProduto({ isOpen, onClose, onSave }) {
           Descrição:
           <textarea
             className='text-black'
-            value={product.descricao}
+            value={productData.descricao}
             onChange={(e) => handleChange('descricao', e.target.value)}
           ></textarea>
         </label>
@@ -89,7 +100,7 @@ export default function PopupProduto({ isOpen, onClose, onSave }) {
             className='text-black'
             type="number"
             step="0.01"
-            value={product.preco}
+            value={productData.preco}
             onChange={(e) => handleChange('preco', e.target.value)}
           />
         </label>

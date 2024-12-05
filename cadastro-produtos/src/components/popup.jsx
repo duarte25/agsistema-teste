@@ -43,9 +43,7 @@ export default function PopupProduto({ isOpen, onClose, onSave, product, isEdit 
       const response = await fetchApi(url, method, data);
      
       if (response.error) {
-        console.log("OLA", response.message)
-        response.message.forEach((err) => {
-          console.log("ERRROR", err)
+        response.errors.forEach((err) => {
 
           toast.error(err.message || "Erro ao salvar produto!");
         });

@@ -35,7 +35,12 @@ export const fetchApi = async (route, method, data, ...props) => {
       return {
         data: [],
         error: true,
-        errors: errorData.message || [{ message: "Erro inesperado na requisição" }],
+        errors: Array.isArray(errorData.errors)
+          ? errorData.errors.map((err) => ({
+              field: err.field || null,
+              message: err.errors ? err.errors.join(", ") : err.message || "Erro inesperado",
+            }))
+          : [{ message: errorData.message || "Erro inesperado na requisição" }],
       };
     }
 
@@ -43,7 +48,7 @@ export const fetchApi = async (route, method, data, ...props) => {
 
     if (responseData) {
       return {
-        data: responseData?.data,
+        data: responseData?.data || responseData,
         error: false,
         errors: [],
       };
@@ -55,7 +60,7 @@ export const fetchApi = async (route, method, data, ...props) => {
       };
     }
   } catch (error) {
-    console.log("Erro na requisição", error);
+    console.error("Erro na requisição", error);
     return {
       data: [],
       error: true,

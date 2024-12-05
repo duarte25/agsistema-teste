@@ -41,9 +41,12 @@ export default function PopupProduto({ isOpen, onClose, onSave, product, isEdit 
       const method = isEdit ? 'PUT' : 'POST';
       const url = isEdit ? `/produtos/${product.id}` : '/produtos';
       const response = await fetchApi(url, method, data);
-
+     
       if (response.error) {
-        response.errors.forEach((err) => {
+        console.log("OLA", response.message)
+        response.message.forEach((err) => {
+          console.log("ERRROR", err)
+
           toast.error(err.message || "Erro ao salvar produto!");
         });
       } else {

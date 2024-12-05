@@ -24,12 +24,19 @@ export class ProdutoService {
       errors.push('O preço deve ser maior que zero.');
     }
 
-    // Se houver erros, lançar a exceção com os erros no formato de array
+    // Se houver erros, lançar a exceção no formato padronizado
     if (errors.length > 0) {
       throw new BadRequestException({
-        message: errors,
-        error: 'Bad Request',
-        statusCode: 400,
+        data: [],
+        error: true,
+        code: 400,
+        message: 'Erro de validação',
+        errors: [
+          {
+            field: 'preco',
+            errors,
+          },
+        ],
       });
     }
   }

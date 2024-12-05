@@ -9,6 +9,7 @@ import {
   ValidationPipe,
   UsePipes,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { ProdutoService } from './produto.service';
 import { Produto } from './produto.entity';
@@ -31,13 +32,7 @@ export class ProdutoController {
         errors: [],
       };
     } catch (err) {
-      return {
-        data: [],
-        error: true,
-        code: 400,
-        message: 'Erro ao criar o produto.',
-        errors: [err.message],
-      };
+      return this.handleError(err);
     }
   }
 
@@ -54,13 +49,7 @@ export class ProdutoController {
         errors: [],
       };
     } catch (err) {
-      return {
-        data: [],
-        error: true,
-        code: 400,
-        message: 'Erro ao listar os produtos.',
-        errors: [err.message],
-      };
+      return this.handleError(err);
     }
   }
 
@@ -80,13 +69,7 @@ export class ProdutoController {
         errors: [],
       };
     } catch (err) {
-      return {
-        data: [],
-        error: true,
-        code: err instanceof NotFoundException ? 404 : 400,
-        message: err.message,
-        errors: [err.message],
-      };
+      return this.handleError(err);
     }
   }
 
@@ -106,13 +89,7 @@ export class ProdutoController {
         errors: [],
       };
     } catch (err) {
-      return {
-        data: [],
-        error: true,
-        code: 400,
-        message: 'Erro ao atualizar o produto.',
-        errors: [err.message],
-      };
+      return this.handleError(err);
     }
   }
 
@@ -129,13 +106,55 @@ export class ProdutoController {
         errors: [],
       };
     } catch (err) {
-      return {
-        data: [],
-        error: true,
-        code: 400,
-        message: `Erro ao remover o produto com id ${id}.`,
-        errors: [err.message],
-      };
+      return this.handleError(err);
     }
+  }
+
+  private handleError(err: any): any {
+    if (err instanceof BadRequestException) {
+      const response = err.getResponse();
+
+      // Tratamento para erros de validação (entidade)
+      if (
+        response &&
+        typeof response === 'object' &&
+        Array.isArray(response['errors'])
+      ) {
+        return {
+          data: [],
+          error: true,
+          code: 400,
+          message: response['message'] || 'Erro de validação',
+          errors: response['errors'],
+        };
+      }
+
+      // Tratamento para erros no serviço, especialmente o erro de "preço"
+      if (
+        response &&
+        typeof response === 'object' &&
+        Array.isArray(response['message'])
+      ) {
+        return {
+          data: [],
+          error: true,
+          code: 400,
+          message: 'Erro de validação',
+          errors: response['message'].map((msg) => ({
+            field: 'preco',
+            errors: [msg],
+          })),
+        };
+      }
+    }
+
+    // Erros genéricos ou não tratados
+    return {
+      data: [],
+      error: true,
+      code: 400,
+      message: 'Erro inesperado.',
+      errors: [err.message],
+    };
   }
 }

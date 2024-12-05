@@ -1,15 +1,6 @@
 import logRoutes from "../middlewares/LogRoutesMiddleware.js";
 import auth from "./authRouter.js";
 import usuarios from "./usuarioRouter.js";
-import recuperarSenha from "./recuperaSenhaRouter.js";
-import setor from "./setorRouter.js";
-import itens from "./itemRoutes.js";
-import inventarios from "./inventarioRoutes.js";
-import campus from "./campusRouter.js";
-import relatorio from "./pdfRouter.js";
-import GrupoController from "../controllers/GrupoController.js";
-import imagem from "./imagemRouter.js";
-
 
 const routes = (app) => {
 
@@ -21,20 +12,9 @@ const routes = (app) => {
         res.status(200).redirect("/docs");
     });
 
-    // Para, se necessário, atualizar as informações dos grupos antes de verificar as permissões
-    app.use(GrupoController.carregarGrupos);
-
     app.use(
         auth,
-        usuarios,
-        recuperarSenha,
-        itens,
-        inventarios,
-        setor,
-        campus,
-        relatorio,
-        imagem
-        // Aqui ficarão as rotas da API, que serão definidas posteriormente
+        usuarios
     );
 };
 

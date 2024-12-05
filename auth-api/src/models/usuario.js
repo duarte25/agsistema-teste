@@ -7,8 +7,7 @@ const usuarioSchema = new mongoose.Schema({
         type: String,
         minlength: 3,
         maxlength: 200,
-        required: true,
-        index: true
+        required: true
     },
     cpf: {
         type: String,
@@ -16,38 +15,17 @@ const usuarioSchema = new mongoose.Schema({
         maxlength: 11,
         required: true,
         unique: true,
-        index: true
     },
     email: {
         type: String,
         required: true,
-        unique: true,
-        index: true
+        unique: true
     },
     senha: {
         type: String,
         required: true,
         select: false,
         minlength: 8
-    },
-    tokenRecuperaSenha: {
-        type: String,
-        trim: true,
-        index: true,
-        select: false
-    },
-    campus: {
-        type: mongoose.Types.ObjectId,
-        ref: "campus"
-    },
-    grupos: [{
-        type: String,
-        ref: "grupos"
-    }],
-    ativo: {
-        type: Boolean,
-        required: true,
-        default: true
     }
 },
     {

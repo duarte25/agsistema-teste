@@ -10,42 +10,45 @@ export class ProdutoService {
     private produtoRepository: Repository<Produto>,
   ) {}
 
-  // Função de validação de preço centralizada no serviço
-  private validatePreco(preco: number) {
-    const precoStr = preco.toString();
-    const regex = /^\d+(\.\d{1,2})?$/;
+  // Função de validação centralizada
+  private validateProduto(produto: Produto) {
     const errors = [];
+
+    // Validação do nome
+    if (!produto.nome || produto.nome.trim() === '') {
+      errors.push('O nome do produto não pode ser vazio.');
+    }
+
+    // Validação do preço
+    const precoStr = produto.preco.toString();
+    const regex = /^\d+(\.\d{1,2})?$/;
 
     if (!regex.test(precoStr)) {
       errors.push('O preço deve ter no máximo duas casas decimais.');
     }
 
-    if (preco <= 0) {
+    if (produto.preco <= 0) {
       errors.push('O preço deve ser maior que zero.');
     }
 
-    // Se houver erros, lançar a exceção no formato padronizado
+    // Se houver erros, lançar exceção
     if (errors.length > 0) {
       throw new BadRequestException({
         data: [],
         error: true,
         code: 400,
         message: 'Erro de validação',
-        errors: [
-          {
-            field: 'preco',
-            errors,
-          },
-        ],
+        errors: errors.map((msg) => ({
+          field: 'produto',
+          errors: [msg],
+        })),
       });
     }
   }
 
   // Criar um novo produto
   async create(produto: Produto): Promise<Produto> {
-    // Valida preço antes de criar o produto
-    this.validatePreco(produto.preco);
-
+    this.validateProduto(produto);
     return this.produtoRepository.save(produto);
   }
 
@@ -63,9 +66,7 @@ export class ProdutoService {
 
   // Atualizar um produto com PUT
   async update(id: number, produto: Produto): Promise<Produto> {
-    // Valida preço antes de atualizar o produto
-    this.validatePreco(produto.preco);
-
+    this.validateProduto(produto);
     await this.produtoRepository.update(id, produto);
     return this.findOne(id);
   }

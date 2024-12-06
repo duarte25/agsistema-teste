@@ -33,7 +33,7 @@ async function conectarBanco() {
                     console.log("Desconectou do banco de dados.");
             });
 
-        await mongoose.connect(bancoUrl);
+        await mongoose.connect("mongodb://root:panelaNotificacaoDB@auth-mongo:27017/panelanotificacaodb?authSource=admin", { useNewUrlParser: true, useUnifiedTopology: true });
 
     } catch (error) {
         console.log("Erro ao conectar com banco " + error);

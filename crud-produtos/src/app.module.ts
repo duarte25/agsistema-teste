@@ -1,12 +1,17 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProdutoModule } from './produto/produto.module';
+import { ConfigModule } from '@nestjs/config'; // Importe o ConfigModule
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
+      host: 'postgres',
       port: 5432,
       username: 'usuario',
       password: 'senha',
@@ -14,7 +19,7 @@ import { ProdutoModule } from './produto/produto.module';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
-    ProdutoModule,
+    ProdutoModule, // Seu módulo de produtos
   ],
 })
 export class AppModule {}

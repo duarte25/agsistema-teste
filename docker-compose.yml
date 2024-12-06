@@ -1,0 +1,68 @@
+services:
+  crud-produtos:
+    build:
+      context: ./crud-produtos
+    container_name: crud-produtos
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+
+  cadastro-produtos:
+    build:
+      context: ./cadastro-produtos
+    container_name: cadastro-produtos
+    ports:
+      - "3001:3001"
+    networks:
+      - app-network
+
+  auth-api:
+    build:
+      context: ./auth-api
+    container_name: auth-api
+    ports:
+      - "3010:3010"
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres:14-alpine
+    container_name: postgres-container
+    environment:
+      POSTGRES_USER: usuario
+      POSTGRES_PASSWORD: senha
+      POSTGRES_DB: produtos_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+
+  auth-mongo:
+    restart: unless-stopped
+    container_name: auth-mongo
+    image: mongo:6.0.7
+    ports:
+      - ${DB_EXPOSE_PORT}:27017
+    volumes:
+      - "${DB_VOLUME:-vol-db}:/data/db"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${DB_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${DB_PASSWORD}
+      - MONGO_INITDB_DATABASE=${DB_DATABASE}
+      - TZ=America/Porto_Velho
+      - LANG=${LANG}
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+    driver: local
+  vol-db:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge

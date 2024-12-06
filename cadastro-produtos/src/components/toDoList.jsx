@@ -48,9 +48,10 @@ const TodoList = () => {
   };
 
   return (
-    <div className="pt-96">
-      <h1>Lista de Produtos</h1>
-      <button onClick={() => setIsAdding(true)}>Adicionar Produto</button>
+  <div className="w-3/4 flex flex-col text-center" >
+      <h1 className="text-4xl text-slate-800">Lista de Produtos</h1>
+
+      {isAdding && <div className="fixed top-0 left-0 w-full h-full bg-white/80 z-10"></div>}
 
       <PopupProduto
         isOpen={isAdding}
@@ -59,8 +60,10 @@ const TodoList = () => {
         product={editingProduct}
         isEdit={Boolean(editingProduct)}
       />
-
+      
       {isLoading ? <p>Carregando...</p> : <Produtos data={data} setData={setData} onEditProduct={handleEditProduct} />}
+      
+      <button className="mt-[5%] rounded-[8px] bg-blue-700 border-none w-full h-[3.9rem] text-white font-normal text-[1.6rem]" onClick={() => setIsAdding(true)}>Adicionar produto</button>
     </div>
   );
 };

@@ -44,7 +44,6 @@ export default function PopupProduto({ isOpen, onClose, onSave, product, isEdit 
      
       if (response.error) {
         response.errors.forEach((err) => {
-
           toast.error(err.message || "Erro ao salvar produto!");
         });
       } else {
@@ -74,31 +73,31 @@ export default function PopupProduto({ isOpen, onClose, onSave, product, isEdit 
 
   return (
     <Popup open={isOpen} onClose={onClose} modal nested>
-      <div style={{ padding: '20px', maxWidth: '400px', margin: '0 auto' }}>
-        <h2>{isEdit ? 'Editar Produto' : 'Adicionar Produto'}</h2>
-        <label>
+      <div className="p-5 max-w-sm mx-auto bg-white rounded-lg shadow-lg">
+        <h2 className="text-xl font-semibold mb-4 text-zinc-950">{isEdit ? 'Editar Produto' : 'Adicionar Produto'}</h2>
+        <label className="block mb-2 text-zinc-950">
           Nome:
           <input
-            className='text-black'
+            className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
             type="text"
             value={productData.nome}
             onChange={(e) => handleChange('nome', e.target.value)}
           />
         </label>
         <br />
-        <label>
+        <label className="block mb-2 text-zinc-950">
           Descrição:
           <textarea
-            className='text-black'
+            className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
             value={productData.descricao}
             onChange={(e) => handleChange('descricao', e.target.value)}
           ></textarea>
         </label>
         <br />
-        <label>
+        <label className="block mb-2 text-zinc-950">
           Preço:
           <input
-            className='text-black'
+            className="w-full p-2 border border-gray-300 rounded mt-1 text-black"
             type="number"
             step="0.01"
             value={productData.preco}
@@ -106,10 +105,20 @@ export default function PopupProduto({ isOpen, onClose, onSave, product, isEdit 
           />
         </label>
         <br />
-        <button onClick={handleSave} style={{ marginRight: '10px' }}>
-          Salvar
-        </button>
-        <button onClick={onClose}>Cancelar</button>
+        <div className="flex justify-end mt-4">
+          <button
+            onClick={handleSave}
+            className="px-4 py-2 bg-blue-500 text-white rounded mr-2 hover:bg-blue-600"
+          >
+            Salvar
+          </button>
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
+          >
+            Cancelar
+          </button>
+        </div>
       </div>
     </Popup>
   );

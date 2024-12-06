@@ -31,26 +31,28 @@ export default function Produtos({ data, setData, onEditProduct }) {
                 data.map((produto, index) => (
                     <div
                         key={index}
-                        style={{ marginBottom: '10px', border: '1px solid #ccc', padding: '10px' }}
+                        className="border border-gray-300 p-2 flex flex-row justify-around"
                     >
-                        <div>
-                            <h3>{produto.nome}</h3>
-                            <p>{produto.descricao}</p>
+                        <div className="text-start">
+                            <h3 className="font-bold">Nome: {produto.nome}</h3>
+                            <p>Descrição: {produto.descricao}</p>
                             <span>Preço: R${produto.preco}</span>
                         </div>
-                        <button
-                            onClick={() => handleDelete(produto.id)}
-                            disabled={loading}
-                            style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-                        >
-                            <FaRegTrashAlt color="red" />
-                        </button>
-                        <button
-                            onClick={() => onEditProduct(produto)}
-                            style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-                        >
-                            <MdOutlineEdit color="blue" />
-                        </button>
+                        <div className="flex justify-center">
+                            <button
+                                onClick={() => handleDelete(produto.id)}
+                                disabled={loading}
+                                className="bg-none border-none cursor-pointer mr-2"
+                            >
+                                <FaRegTrashAlt className="text-gray-950 size-10" />
+                            </button>
+                            <button
+                                onClick={() => onEditProduct(produto)}
+                                className="bg-none border-none cursor-pointer"
+                            >
+                                <MdOutlineEdit className="text-gray-950 size-10" />
+                            </button>
+                        </div>
                     </div>
                 ))
             ) : (

@@ -26,37 +26,39 @@ export default function Produtos({ data, setData, onEditProduct }) {
     };
 
     return (
-        <div>
+        <div className="space-y-4"> 
             {Array.isArray(data) && data.length > 0 ? (
                 data.map((produto, index) => (
                     <div
                         key={index}
-                        className="border border-gray-300 p-2 flex flex-row justify-around"
+                        className="border border-gray-300 p-4 flex justify-between items-center"
                     >
-                        <div className="text-start">
-                            <h3 className="font-bold">Nome: {produto.nome}</h3>
-                            <p>Descrição: {produto.descricao}</p>
-                            <span>Preço: R${produto.preco}</span>
+
+                        <div className="flex flex-col text-left">
+                            <h3 className="font-bold text-lg">Nome: {produto.nome}</h3>
+                            <p className="text-sm">Descrição: {produto.descricao}</p>
+                            <span className="text-sm font-semibold text-gray-800">Preço: R${produto.preco}</span>
                         </div>
-                        <div className="flex justify-center">
+
+                        <div className="flex space-x-4">
                             <button
                                 onClick={() => handleDelete(produto.id)}
                                 disabled={loading}
-                                className="bg-none border-none cursor-pointer mr-2"
+                                className="bg-none border-none cursor-pointer"
                             >
-                                <FaRegTrashAlt className="text-gray-950 size-10" />
+                                <FaRegTrashAlt className="text-gray-950 text-xl" />
                             </button>
                             <button
                                 onClick={() => onEditProduct(produto)}
                                 className="bg-none border-none cursor-pointer"
                             >
-                                <MdOutlineEdit className="text-gray-950 size-10" />
+                                <MdOutlineEdit className="text-gray-950 text-xl" />
                             </button>
                         </div>
                     </div>
                 ))
             ) : (
-                <p>Nenhum item encontrado.</p>
+                <p className="text-gray-500">Nenhum item encontrado.</p>
             )}
         </div>
     );

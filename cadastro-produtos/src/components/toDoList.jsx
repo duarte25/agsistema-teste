@@ -53,7 +53,7 @@ const TodoList = () => {
 
   return (
     <div className="w-3/4 flex flex-col text-center">
-      <h1 className="text-4xl text-slate-800">Lista de Produtos</h1>
+      <h1 className="text-4xl text-slate-800 mb-4">Lista de Produtos</h1>
 
       {isOpen && <div className="fixed top-0 left-0 w-full h-full bg-white/80 z-10"></div>}
 
@@ -70,7 +70,10 @@ const TodoList = () => {
           <Loader2 className="h-32 w-32 animate-spin text-slate-600" />
         </div>
       ) : (
-        <Produtos data={data} setData={setData} onEditProduct={handleEditProduct} />
+  
+        <div className="overflow-y-auto max-h-[calc(100vh-200px)]">
+          <Produtos data={data} setData={setData} onEditProduct={handleEditProduct} />
+        </div>
       )}
 
       <button
@@ -80,6 +83,7 @@ const TodoList = () => {
         Adicionar produto
       </button>
     </div>
+
   );
 };
 

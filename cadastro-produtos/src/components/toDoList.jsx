@@ -5,7 +5,7 @@ import Produtos from './produtos';
 import PopupProduto from './popup';
 
 const TodoList = () => {
-  const [isAdding, setIsAdding] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);  // Controla o popup
   const [editingProduct, setEditingProduct] = useState(null);
   const [data, setData] = useState([]); 
 
@@ -21,49 +21,57 @@ const TodoList = () => {
   });
 
   useEffect(() => {
-    if (!isAdding && !editingProduct) {
+    if (!isOpen && !editingProduct) {
       refetch();
     }
-  }, [isAdding, editingProduct, refetch]);
+  }, [isOpen, editingProduct, refetch]);
 
   const handleEditProduct = (product) => {
     setEditingProduct(product);
-    setIsAdding(true); 
+    setIsOpen(true);
   };
 
-  // Função chamada após salvar o produto (adicionar ou editar)
+  const handleAddProduct = () => {
+    setEditingProduct(null); 
+    setIsOpen(true);
+  };
+
+  // Função chamada após salvar o produto, adicionar ou editar
   const handleSaveProduct = (updatedProduct) => {
     setData((prevData) => {
-      // Se o produto foi editado, substituímos o item correspondente
       if (updatedProduct.id) {
         return prevData.map((produto) =>
           produto.id === updatedProduct.id ? updatedProduct : produto
         );
       }
-      // Se for um novo produto, apenas adicionamos à lista
       return [...prevData, updatedProduct];
     });
     setEditingProduct(null); 
-    setIsAdding(false);
+    setIsOpen(false);  
   };
 
   return (
-  <div className="w-3/4 flex flex-col text-center" >
+    <div className="w-3/4 flex flex-col text-center">
       <h1 className="text-4xl text-slate-800">Lista de Produtos</h1>
 
-      {isAdding && <div className="fixed top-0 left-0 w-full h-full bg-white/80 z-10"></div>}
+      {isOpen && <div className="fixed top-0 left-0 w-full h-full bg-white/80 z-10"></div>}
 
       <PopupProduto
-        isOpen={isAdding}
-        onClose={() => setIsAdding(false)}
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)} 
         onSave={handleSaveProduct}
         product={editingProduct}
-        isEdit={Boolean(editingProduct)}
+        isEdit={Boolean(editingProduct)} 
       />
       
       {isLoading ? <p>Carregando...</p> : <Produtos data={data} setData={setData} onEditProduct={handleEditProduct} />}
       
-      <button className="mt-[5%] rounded-[8px] bg-blue-700 border-none w-full h-[3.9rem] text-white font-normal text-[1.6rem]" onClick={() => setIsAdding(true)}>Adicionar produto</button>
+      <button 
+        className="mt-[5%] rounded-[8px] bg-blue-700 border-none w-full h-[3.9rem] text-white font-normal text-[1.6rem]" 
+        onClick={handleAddProduct}
+      >
+        Adicionar produto
+      </button>
     </div>
   );
 };

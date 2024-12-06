@@ -11,14 +11,22 @@ export default function PopupProduto({ isOpen, onClose, onSave, product, isEdit 
   });
 
   useEffect(() => {
-    if (product && isEdit) {
-      setProductData({
-        nome: product.nome,
-        descricao: product.descricao,
-        preco: product.preco.toString(),
-      });
+    if (isOpen) {
+      if (isEdit && product) {
+        setProductData({
+          nome: product.nome,
+          descricao: product.descricao,
+          preco: product.preco.toString(),
+        });
+      } else {
+        setProductData({
+          nome: "",
+          descricao: "",
+          preco: "",
+        });
+      }
     }
-  }, [product, isEdit]);
+  }, [isOpen, isEdit, product]);
 
   const handleChange = (field, value) => {
     if (field === 'preco') {
@@ -50,6 +58,11 @@ export default function PopupProduto({ isOpen, onClose, onSave, product, isEdit 
         toast.success(`${isEdit ? 'Produto atualizado' : 'Produto cadastrado'} com sucesso!`);
         onSave && onSave(data);
         onClose();
+        setProductData({
+          nome: "",
+          descricao: "",
+          preco: "",
+        });
       }
     } catch (error) {
       toast.error("Erro ao salvar produto!");
@@ -71,8 +84,12 @@ export default function PopupProduto({ isOpen, onClose, onSave, product, isEdit 
     saveProduct(validProduct);
   };
 
+  const handleClose = () => {
+    onClose();
+  };
+
   return (
-    <Popup open={isOpen} onClose={onClose} modal nested>
+    <Popup open={isOpen} onClose={handleClose} modal nested>
       <div className="p-5 max-w-sm mx-auto bg-white rounded-lg shadow-lg">
         <h2 className="text-xl font-semibold mb-4 text-zinc-950">{isEdit ? 'Editar Produto' : 'Adicionar Produto'}</h2>
         <label className="block mb-2 text-zinc-950">
@@ -113,7 +130,7 @@ export default function PopupProduto({ isOpen, onClose, onSave, product, isEdit 
             Salvar
           </button>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
           >
             Cancelar
